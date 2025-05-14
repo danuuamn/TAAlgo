@@ -8,20 +8,106 @@ const int MAX_FILM = 100;
 struct Film {
     string judul;
     string genre;
-    int durasi;
+    float rating;
 };
 
 Film daftarFilm[MAX_FILM];
 int jumlahFilm = 0;
-void tambahFilm(string judul, string genre, int durasi) {
+void tambahFilm(string judul, string genre, float rating) {
     if (jumlahFilm < MAX_FILM) {
         daftarFilm[jumlahFilm].judul = judul;
         daftarFilm[jumlahFilm].genre = genre;
-        daftarFilm[jumlahFilm].durasi = durasi;
+        daftarFilm[jumlahFilm].rating = rating;
         jumlahFilm++;
     } else {
         cout << "Daftar film sudah penuh!" << endl;
     }
+}
+
+void LihatDaftarFilm (){
+    system("cls");
+    cout << "===== Daftar Film =====" << endl;
+    if (jumlahFilm == 0) {
+    cout << "Belum ada film yang tersedia." << endl;
+    } else {
+    for (int i = 0; i < jumlahFilm; i++) {
+    cout << i + 1 << ". " << daftarFilm[i].judul 
+    << " | " << daftarFilm[i].genre 
+    << " | " << daftarFilm[i].rating << " menit" << endl;
+    }
+    }
+}
+
+void cariFilm(string nama) {
+    bool ditemukan = false;
+    for (int i = 0; i < jumlahFilm; i++) {
+        if (daftarFilm[i].judul == nama) {
+            cout << "Film ditemukan:\n";
+            cout << daftarFilm[i].judul << " | " << daftarFilm[i].genre << " | " << daftarFilm[i].rating << " menit" << endl;
+            ditemukan = true;
+            break;
+        }
+    }
+    if (!ditemukan) {
+        cout << "Film tidak ditemukan.\n";
+    }
+}
+
+void urutkanFilmBerdasarkanRating() {
+    for (int i = 0; i < jumlahFilm - 1; i++) {
+        for (int j = 0; j < jumlahFilm - i - 1; j++) {
+            if (daftarFilm[j].rating < daftarFilm[j + 1].rating) {
+                swap(daftarFilm[j], daftarFilm[j + 1]);
+            }
+        }
+    }
+    cout << "Film berhasil diurutkan berdasarkan rating (tertinggi ke terendah).\n";
+}
+
+void tambahFilm (){
+                            if (jumlahFilm >= MAX_FILM) {
+                            cout << "Kapasitas film sudah penuh!" << endl;
+                        } else {
+                        cout << "=== Tambah Film ===" << endl;
+                        cout << "Masukkan judul film: ";
+                        cin.ignore();
+                        getline(cin, daftarFilm[jumlahFilm].judul);
+                        cout << "Masukkan genre film: ";
+                        getline(cin, daftarFilm[jumlahFilm].genre);
+                        cout << "Masukkan rating film: ";
+                        cin >> daftarFilm[jumlahFilm].rating;
+                        jumlahFilm++;
+                        cout << "Film berhasil ditambahkan!" << endl;
+                        }
+
+}
+
+void hapusFilm (){
+                            if (jumlahFilm == 0) {
+                        cout << "Tidak ada film untuk dihapus." << endl;
+                        } else {
+                        string hapus;
+                        cin.ignore(); 
+                        cout << "Masukkan nama film yang akan dihapus: ";
+                        getline(cin, hapus);
+
+                        int index = -1;
+                        for (int i = 0; i < jumlahFilm; i++) {
+                            if (daftarFilm[i].judul == hapus) {
+                                index = i;
+                                break;
+                            }
+                        }
+                        if (index != -1) {
+                            for (int i = index; i < jumlahFilm - 1; i++) {
+                                daftarFilm[i] = daftarFilm[i + 1];
+                            }
+                            jumlahFilm--;
+                            cout << "Film berhasil dihapus!" << endl;
+                        } else {
+                            cout << "Film tidak ditemukan!" << endl;
+                        }
+                        }
 }
 
 int main () {
@@ -81,56 +167,28 @@ int main () {
                 cout << "Pilih menu: "; cin >> menu2;
                 switch (menu2) {
                     case 1:
-                        system("cls");
-                        cout << "===== Daftar Film =====" << endl;
-                        if (jumlahFilm == 0) {
-                        cout << "Belum ada film yang tersedia." << endl;
-                        } else {
-                        for (int i = 0; i < jumlahFilm; i++) {
-                         cout << i + 1 << ". " << daftarFilm[i].judul 
-                         << " | " << daftarFilm[i].genre 
-                         << " | " << daftarFilm[i].durasi << " menit" << endl;
-                        }
-                        }
+                        LihatDaftarFilm();
                         break;
-                    case 2:
-                        cout << "Cari film" << endl;
+                    case 2: {
+                        cin.ignore();
+                        string namaFilm;
+                        cout << "Masukkan nama film yang ingin dicari: ";
+                        getline(cin, namaFilm);
+                        cariFilm(namaFilm);
                         break;
+                    }
                     case 3:
-                        cout << "Urutkan film" << endl;
+                        urutkanFilmBerdasarkanRating();
                         break;
+
                     case 4:
-                        if (jumlahFilm >= MAX_FILM) {
-                            cout << "Kapasitas film sudah penuh!" << endl;
-                        } else {
-                        cout << "=== Tambah Film ===" << endl;
-                        cout << "Masukkan judul film: ";
-                        cin.ignore(); // Untuk menghindari bug saat setelah cin sebelumnya
-                        getline(cin, daftarFilm[jumlahFilm].judul);
-                        cout << "Masukkan genre film: ";
-                        getline(cin, daftarFilm[jumlahFilm].genre);
-                        cout << "Masukkan durasi film (dalam menit): ";
-                        cin >> daftarFilm[jumlahFilm].durasi;
-                        jumlahFilm++;
-                        cout << "Film berhasil ditambahkan!" << endl;
-                        }
+                        tambahFilm();
+                        
                         break;
                     case 5:
-                        if (jumlahFilm == 0) {
-                        cout << "Tidak ada film untuk dihapus." << endl;
-                        } else {
-                        int hapus;
-                        cout << "Masukkan nomor film yang akan dihapus: ";
-                        cin >> hapus;
-                        if (hapus < 1 || hapus > jumlahFilm) {
-                        cout << "Nomor tidak valid!" << endl;
-                        } else {
-                        for (int i = hapus - 1; i < jumlahFilm - 1; i++) {
-                        daftarFilm[i] = daftarFilm[i + 1];
-                        }
-                        jumlahFilm--;
-                        cout << "Film berhasil dihapus!" << endl;
-                        }
+                        hapusFilm();
+                
+                      
                     
                         break;
                     case 6:
@@ -138,7 +196,7 @@ int main () {
                         break;
                     default:
                         cout << "Pilihan tidak valid!" << endl;
-                    }
+                    
                     break;
 
     }
