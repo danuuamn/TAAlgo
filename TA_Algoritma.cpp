@@ -14,7 +14,8 @@ int main () {
         cout << "3. Keluar" << endl;
         cout << "Pilih menu: "; cin >> menu;
         cout << " " << endl;
-
+        cout << "==========================" << endl;
+        
         switch (menu) {
             case 1:
                 system("cls");
