@@ -158,10 +158,10 @@ void lihatJadwalTayang() {
         cout << "Belum ada jadwal tayang." << endl;
     } else {
         int i = 1;
-        JadwalTayang* temp = headJadwal;
-        while (temp != nullptr) {
-            cout << i++ << ". " << temp->judulFilm << " | " << temp->waktuTayang << endl;
-            temp = temp->next;
+        JadwalTayang* tayang = headJadwal;
+        while (tayang != nullptr) {
+            cout << i++ << ". " << tayang->judulFilm << " | " << tayang->waktuTayang << endl;
+            tayang = tayang->next;
         }
     }
 }
@@ -240,6 +240,7 @@ void hapusJadwalTayang() {
 
 int main()
 {
+    JadwalTayang* tayang = headJadwal;
     int menu, menu1, menu2, menu3;
     char ulang;
     do
@@ -247,6 +248,17 @@ int main()
         system("cls");
         cout << "==========================" << endl;
         cout << "PROGRAM ADMIN BIOSKOP XXZ" << endl;
+        cout << "==========================" << endl;
+        cout << "Film yang sedang tayang = " << endl;
+            if (headJadwal == nullptr) {
+                cout << "Belum ada jadwal tayang." << endl;
+            } else if (headJadwal->next == nullptr) {
+                cout << headJadwal->judulFilm << endl;
+            } else {
+                cout << headJadwal->judulFilm << endl;
+                cout << "Film yang akan tayang selanjutnya = " << endl;
+                cout << headJadwal->next->judulFilm << endl;
+            }
         cout << "==========================" << endl;
         cout << "1. Jadwal Tayang" << endl;
         cout << "2. Daftar Film" << endl;
