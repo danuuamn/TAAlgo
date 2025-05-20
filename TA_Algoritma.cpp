@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 const int MAX_FILM = 100;
@@ -197,11 +198,11 @@ void tambahJadwalTayang() {
     if (headJadwal == nullptr) {
         headJadwal = baru;
     } else {
-        JadwalTayang* temp = headJadwal;
-        while (temp->next != nullptr) {
-            temp = temp->next;
+        JadwalTayang* tampil = headJadwal;
+        while (tampil->next != nullptr) {
+            tampil = tampil->next;
         }
-        temp->next = baru;
+        tampil->next = baru;
     }
 
     cout << "Jadwal tayang berhasil ditambahkan!" << endl;
@@ -213,24 +214,24 @@ void hapusJadwalTayang() {
     cout << "Masukkan judul film yang ingin dihapus dari jadwal: ";
     getline(cin, judul);
 
-    JadwalTayang* temp = headJadwal;
+    JadwalTayang* tampil = headJadwal;
     JadwalTayang* prev = nullptr;
     bool ditemukan = false;
 
-    while (temp != nullptr) {
-        if (temp->judulFilm == judul) {
+    while (tampil != nullptr) {
+        if (tampil->judulFilm == judul) {
             ditemukan = true;
             if (prev == nullptr) {
-                headJadwal = temp->next;
+                headJadwal = tampil->next;
             } else {
-                prev->next = temp->next;
+                prev->next = tampil->next;
             }
-            delete temp;
+            delete tampil;
             cout << "Jadwal tayang berhasil dihapus!" << endl;
             break;
         }
-        prev = temp;
-        temp = temp->next;
+        prev = tampil;
+        tampil = tampil->next;
     }
 
     if (!ditemukan) {
@@ -238,8 +239,61 @@ void hapusJadwalTayang() {
     }
 }
 
+void simpanDataFilm() {
+    ofstream file("film.txt");
+    for (int i = 0; i < jumlahFilm; i++) {
+        file << daftarFilm[i].judul << "|" << daftarFilm[i].genre << "|" << daftarFilm[i].rating << "\n";
+    }
+    file.close();
+}
+
+void muatDataFilm() {
+    ifstream file("film.txt");
+    string judul, genre;
+    float rating;
+    jumlahFilm = 0;
+    while (getline(file, judul, '|') && getline(file, genre, '|') && file >> rating) {
+        file.ignore(); // skip newline
+        daftarFilm[jumlahFilm++] = {judul, genre, rating};
+    }
+    file.close();
+}
+
+void simpanJadwalTayang() {
+    ofstream file("jadwal.txt");
+    JadwalTayang* sekarang = headJadwal;
+    while (sekarang != nullptr) {
+        file << sekarang->judulFilm << "|" << sekarang->waktuTayang << "\n";
+        sekarang = sekarang->next;
+    }
+    file.close();
+}
+
+void muatJadwalTayang() {
+    ifstream file("jadwal.txt");
+    string judul, waktu;
+    headJadwal = nullptr;
+
+    while (getline(file, judul, '|') && getline(file, waktu)) {
+        JadwalTayang* baru = new JadwalTayang{judul, waktu, nullptr};
+        if (headJadwal == nullptr) {
+            headJadwal = baru;
+        } else {
+            JadwalTayang* tampil = headJadwal;
+            while (tampil->next != nullptr)
+                tampil = tampil->next;
+            tampil->next = baru;
+        }
+    }
+    file.close();
+}
+
+
+
 int main()
 {
+    muatDataFilm();
+    muatJadwalTayang();
     JadwalTayang* tayang = headJadwal;
     int menu, menu1, menu2, menu3;
     char ulang;
@@ -355,6 +409,9 @@ int main()
         cin >> ulang;
     } while (ulang == 'y' || ulang == 'Y');
     cout << "Terima kasih telah menggunakan program ini!" << endl;
+
+      simpanDataFilm();
+simpanJadwalTayang();
 
     return 0;
 }
