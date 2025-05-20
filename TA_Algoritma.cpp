@@ -186,7 +186,7 @@ void tambahJadwalTayang() {
         return;
     }
 
-    cout << "Masukkan waktu tayang (misal: 20:00 atau 2025-05-21 19:00): ";
+    cout << "Masukkan waktu tayang (Contoh = 2025-05-21 19:00) = ";
     getline(cin, waktu);
 
     JadwalTayang* baru = new JadwalTayang;
