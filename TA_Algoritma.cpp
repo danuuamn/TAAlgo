@@ -13,7 +13,7 @@ struct Film
 struct JadwalTayang {
     string judulFilm;
     string waktuTayang;
-    JadwalTayang* next;
+    JadwalTayang *next, *prev;
 };
 
 JadwalTayang* headJadwal = nullptr;
@@ -66,7 +66,7 @@ void cariFilm(string nama)
         if (daftarFilm[i].judul == nama)
         {
             cout << "Film ditemukan:\n";
-            cout << daftarFilm[i].judul << " | " << daftarFilm[i].genre << " | " << daftarFilm[i].rating << " menit" << endl;
+            cout << daftarFilm[i].judul << " | " << daftarFilm[i].genre << " | " << daftarFilm[i].rating << " rating" << endl;
             ditemukan = true;
             break;
         }
@@ -173,7 +173,6 @@ void tambahJadwalTayang() {
     cout << "Masukkan judul film: ";
     getline(cin, judul);
 
-    // Cek apakah film tersedia
     bool ditemukan = false;
     for (int i = 0; i < jumlahFilm; i++) {
         if (daftarFilm[i].judul == judul) {
@@ -187,7 +186,7 @@ void tambahJadwalTayang() {
         return;
     }
 
-    cout << "Masukkan waktu tayang (Contoh = 2025-05-21 19:00) = ";
+    cout << "Masukkan waktu tayang (Contoh = 19:00) = ";
     getline(cin, waktu);
 
     JadwalTayang* baru = new JadwalTayang;
@@ -197,12 +196,14 @@ void tambahJadwalTayang() {
 
     if (headJadwal == nullptr) {
         headJadwal = baru;
+        baru->prev = nullptr;
     } else {
         JadwalTayang* tampil = headJadwal;
         while (tampil->next != nullptr) {
             tampil = tampil->next;
         }
         tampil->next = baru;
+        baru->prev = tampil;
     }
 
     cout << "Jadwal tayang berhasil ditambahkan!" << endl;
@@ -253,7 +254,7 @@ void muatDataFilm() {
     float rating;
     jumlahFilm = 0;
     while (getline(file, judul, '|') && getline(file, genre, '|') && file >> rating) {
-        file.ignore(); // skip newline
+        file.ignore();
         daftarFilm[jumlahFilm++] = {judul, genre, rating};
     }
     file.close();
@@ -278,11 +279,13 @@ void muatJadwalTayang() {
         JadwalTayang* baru = new JadwalTayang{judul, waktu, nullptr};
         if (headJadwal == nullptr) {
             headJadwal = baru;
+            baru->prev = nullptr;
         } else {
             JadwalTayang* tampil = headJadwal;
             while (tampil->next != nullptr)
                 tampil = tampil->next;
             tampil->next = baru;
+            baru->prev = tampil;
         }
     }
     file.close();
@@ -303,20 +306,29 @@ int main()
         cout << "==========================" << endl;
         cout << "PROGRAM ADMIN BIOSKOP XXZ" << endl;
         cout << "==========================" << endl;
-        cout << "Film yang sedang tayang = " << endl;
-            if (headJadwal == nullptr) {
-                cout << "Belum ada jadwal tayang." << endl;
-            } else if (headJadwal->next == nullptr) {
-                cout << headJadwal->judulFilm << endl;
-            } else {
-                cout << headJadwal->judulFilm << endl;
-                cout << "Film yang akan tayang selanjutnya = " << endl;
-                cout << headJadwal->next->judulFilm << endl;
-            }
+        cout << "Film yang sedang tayang            : ";
+        if (headJadwal == nullptr) {
+            cout << "Belum ada jadwal tayang." << endl;
+        } else {
+            cout << headJadwal->judulFilm << " | " << headJadwal->waktuTayang << endl;
+
+            cout << "Film yang akan tayang selanjutnya  : ";
+            if (headJadwal->next != nullptr)
+                cout << headJadwal->next->judulFilm << " | " << headJadwal->next->waktuTayang << endl;
+            else
+                cout << "Tidak ada film selanjutnya." << endl;
+
+            cout << "Film yang telah tayang terakhir    : ";
+            if (headJadwal->prev != nullptr)
+                cout << headJadwal->prev->judulFilm << " | " << headJadwal->prev->waktuTayang << endl;
+            else
+                cout << "Tidak ada film sebelumnya." << endl;
+        }
         cout << "==========================" << endl;
         cout << "1. Jadwal Tayang" << endl;
         cout << "2. Daftar Film" << endl;
-        cout << "3. Keluar" << endl;
+        cout << "3. Tayangkan film selanjutnya" << endl;
+        cout << "4. Keluar" << endl;
         cout << "Pilih menu: ";
         cin >> menu;
         cout << " " << endl;
@@ -399,9 +411,21 @@ int main()
             }
             break;
         case 3:
-            cout << "Terima kasih telah menggunakan program ini!" << endl;
-            exit(0);
+            if (headJadwal != nullptr && headJadwal->next != nullptr) {
+                headJadwal = headJadwal->next;
+                cout << "Film telah diganti ke jadwal berikutnya.\n";
+            } else if (headJadwal != nullptr && headJadwal->next == nullptr) {
+                cout << "Tidak ada film selanjutnya.\n";
+            } else {
+                cout << "Belum ada film tayang.\n";
+            }
             break;
+        case 4:
+            cout << "Terima kasih telah menggunakan program ini!" << endl;
+            simpanDataFilm();
+            simpanJadwalTayang();
+            exit(0);
+            break; 
         default:
             cout << "Pilihan tidak valid!" << endl;
         }
@@ -410,8 +434,8 @@ int main()
     } while (ulang == 'y' || ulang == 'Y');
     cout << "Terima kasih telah menggunakan program ini!" << endl;
 
-      simpanDataFilm();
-simpanJadwalTayang();
+    simpanDataFilm();
+    simpanJadwalTayang();
 
     return 0;
 }
