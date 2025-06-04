@@ -25,20 +25,7 @@ int jumlahJadwal = 0;
 
 Film daftarFilm[MAX_FILM];
 int jumlahFilm = 0;
-void tambahFilm(string judul, string genre, float rating)
-{
-    if (jumlahFilm < MAX_FILM)
-    {
-        daftarFilm[jumlahFilm].judul = judul;
-        daftarFilm[jumlahFilm].genre = genre;
-        daftarFilm[jumlahFilm].rating = rating;
-        jumlahFilm++;
-    }
-    else
-    {
-        cout << "Daftar film sudah penuh!" << endl;
-    }
-}
+
 
 void LihatDaftarFilm()
 {
